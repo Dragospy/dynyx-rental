@@ -302,6 +302,7 @@ AddEventHandler('dynyx-rental:startrental', function(data)
   end
 
   QBCore.Functions.TriggerCallback("dynyx-rental:CheckMoney",function(money)
+    local veh
     if money then
       QBCore.Functions.SpawnVehicle(model, function(vehicle)
         QBCore.Functions.Progressbar("random_task", "Renting", 3000, false, true, {
@@ -318,6 +319,7 @@ AddEventHandler('dynyx-rental:startrental', function(data)
       end, function() -- Cancel
          StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
        end)
+        veh = vehicle
         SetEntityHeading(vehicle, config.RentalLocations.cars.heading)
         CarRStartEmail()
         TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(vehicle))
@@ -325,8 +327,7 @@ AddEventHandler('dynyx-rental:startrental', function(data)
         SpawnVehicle = true
       end, config.RentalLocations.cars.vehiclespawn, true)
       Wait(1000)
-      local vehicle = GetVehiclePedIsIn(player, false)
-      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(vehicle), model)
+      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(veh), model)
     else
       QBCore.Functions.Notify("Not Enough Money", "error")
     end

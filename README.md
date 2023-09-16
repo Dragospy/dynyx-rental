@@ -29,7 +29,7 @@ Advanced QBCore Vehicle Rental Script
 ```lua
         } else if (itemData.name == "rentalpapers") {
             $(".item-info-title").html('<p>'+itemData.label+'</p>')
-            $(".item-info-description").html('<p>'+itemData.description+'</p><p>Name: '+itemData.info.name+'</p><p>Vehicle: '+itemData.info.veh+'</p>');
+            $(".item-info-description").html('<p>'+itemData.description+'</p><p>Name: '+itemData.info.name+'</p><p>Vehicle: '+itemData.info.veh+'</p>><p>Plate: '+itemData.info.plate+'</p>');
 ```            
 
 
