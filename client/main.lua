@@ -1,5 +1,10 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local SpawnVehicle = false
+local veh = {}
+
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+
+end)
 
 
 --Ped Spawn
@@ -302,7 +307,6 @@ AddEventHandler('dynyx-rental:startrental', function(data)
   end
 
   QBCore.Functions.TriggerCallback("dynyx-rental:CheckMoney",function(money)
-    local veh
     if money then
       QBCore.Functions.SpawnVehicle(model, function(vehicle)
         QBCore.Functions.Progressbar("random_task", "Renting", 3000, false, true, {
@@ -319,15 +323,16 @@ AddEventHandler('dynyx-rental:startrental', function(data)
       end, function() -- Cancel
          StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
        end)
-        veh = vehicle
+        veh.vehicle = vehicle
         SetEntityHeading(vehicle, config.RentalLocations.cars.heading)
         CarRStartEmail()
-        TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(vehicle))
+        veh.plate = GetVehicleNumberPlateText(vehicle)
+        TriggerEvent("vehiclekeys:client:SetOwner", veh.plate)
         exports[config.Fuelexport]:SetFuel(vehicle, 100.0)
         SpawnVehicle = true
       end, config.RentalLocations.cars.vehiclespawn, true)
       Wait(1000)
-      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(veh), model)
+      TriggerServerEvent('dynyx-rental:getpapers', veh.plate, model)
     else
       QBCore.Functions.Notify("Not Enough Money", "error")
     end
@@ -350,13 +355,12 @@ RegisterNetEvent('dynyx-rental:ReturnVehicle', function()
   end, function() -- Cancel
      StopAnimTask(PlayerPedId(), "random@atm_robbery@return_wallet_male", "return_wallet_positive_a_male", 1.0)
    end)
-      local Player = QBCore.Functions.GetPlayerData()
       QBCore.Functions.Notify("Thanks for returning the vehicle", "success")
-      TriggerServerEvent('dynyx-rental:takepapers')
-      local car = GetVehiclePedIsIn(PlayerPedId(),true)
-      NetworkFadeOutEntity(car, true,false)
+      NetworkFadeOutEntity(veh.vehicle, true,false)
       Citizen.Wait(3000)
-      QBCore.Functions.DeleteVehicle(car)
+      SetEntityAsMissionEntity(veh.vehicle, true, true)
+      DeleteVehicle(veh.vehicle)
+      TriggerServerEvent('dynyx-rental:takepapers')
   else 
     QBCore.Functions.Notify("There is no Vehicle to Return", "error")
   end
@@ -452,15 +456,16 @@ RegisterNetEvent('dynyx-rental:client:startAirRental', function(data)
       end, function() -- Cancel
          StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
        end)
+        veh.vehicle = vehicle
         SetEntityHeading(vehicle, config.RentalLocations.aircrafts.heading)
         AirRStartEmail()
-        TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(vehicle))
+        veh.plate = GetVehicleNumberPlateText(vehicle)
+        TriggerEvent("vehiclekeys:client:SetOwner", veh.plate)
         exports[config.Fuelexport]:SetFuel(vehicle, 100.0)
         SpawnVehicle = true
       end, config.RentalLocations.aircrafts.vehiclespawn, true)
       Wait(1000)
-      local vehicle = GetVehiclePedIsIn(player, false)
-      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(vehicle), model)
+      TriggerServerEvent('dynyx-rental:getpapers', veh.plate, model)
     else
       QBCore.Functions.Notify("Not Enough Money", "error")
     end
@@ -556,6 +561,7 @@ RegisterNetEvent('dynyx-rental:client:startBoatRental', function(data)
       end, function() -- Cancel
          StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
        end)
+        veh.vehicle = vehicle
         SetEntityHeading(vehicle, config.RentalLocations.boat.heading)
         BoatRStartEmail()
         TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(vehicle))
@@ -563,8 +569,7 @@ RegisterNetEvent('dynyx-rental:client:startBoatRental', function(data)
         SpawnVehicle = true
       end, config.RentalLocations.boat.vehiclespawn, true)
       Wait(1000)
-      local vehicle = GetVehiclePedIsIn(player, false)
-      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(vehicle), model)
+      TriggerServerEvent('dynyx-rental:getpapers', veh.plate, model)
     else
       QBCore.Functions.Notify("Not Enough Money", "error")
     end
@@ -656,19 +661,20 @@ RegisterNetEvent('dynyx-rental:client:startBikeRental', function(data)
           anim = "thanks_male_06",
           flags = 18,
        }, {}, {}, function() -- Done
-        StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
+        StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0) 
       end, function() -- Cancel
          StopAnimTask(PlayerPedId(), "mp_action", "thanks_male_06", 1.0)
        end)
+        veh.vehicle = vehicle
         SetEntityHeading(vehicle, config.RentalLocations.bike.heading)
         BikeRStartEmail()
-        TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(vehicle))
+        veh.plate = GetVehicleNumberPlateText(vehicle)
+        TriggerEvent("vehiclekeys:client:SetOwner", veh.plate)
         exports[config.Fuelexport]:SetFuel(vehicle, 100.0)
         SpawnVehicle = true
       end, config.RentalLocations.bike.vehiclespawn, true)
       Wait(1000)
-      local vehicle = GetVehiclePedIsIn(player, false)
-      TriggerServerEvent('dynyx-rental:getpapers', GetVehicleNumberPlateText(vehicle), model)
+      TriggerServerEvent('dynyx-rental:getpapers', veh.plate, model)
     else
       QBCore.Functions.Notify("Not Enough Money", "error")
     end

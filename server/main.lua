@@ -27,7 +27,7 @@ RegisterServerEvent('dynyx-rental:takepapers', function(plate, model)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     TriggerClientEvent('inventory:client:ItemBox', src,  QBCore.Shared.Items["rentalpapers"], 'remove')
-    Player.Functions.RemoveItem('rentalpapers', 1, false, info)
+    Player.Functions.RemoveItem('rentalpapers', 1, false)
 end)
 
 
