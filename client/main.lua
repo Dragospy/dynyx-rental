@@ -2,11 +2,6 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local SpawnVehicle = false
 local veh = {}
 
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-
-end)
-
-
 --Ped Spawn
 function SpawnPed()
   RequestModel( GetHashKey( config.RentalLocations.cars.pedname ) )
